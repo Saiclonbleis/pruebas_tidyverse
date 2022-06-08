@@ -1,0 +1,142 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(viridis)
+library(viridisLite)
+```
+
+
+```{r}
+#cargo el dataset y pongo las columnas en español
+pokemon <- read.csv("pokemon.csv", header = T)
+
+colnames(pokemon) <- c("id", "nombre", "tipo_1", "tipo_2", "total", "HP", "ataque", "defensa", "ataque_especial", "defensa_especial", "velocidad", "generacion", "legendario")
+pokemon_limpio <- pokemon %>% 
+  mutate(tipo_1 = case_when(tipo_1 == "Water" ~ "Agua",
+                            tipo_1 == "Bug" ~ "Bicho",
+                            tipo_1 == "Dark" ~ "Oscuro",
+                            tipo_1 == "Dragon" ~ "Dragon",
+                            tipo_1 == "Electric" ~ "Electrico",
+                            tipo_1 == "Fairy" ~ "Hada",
+                            tipo_1 == "Fighting" ~ "Lucha",
+                            tipo_1 == "Fire" ~ "Fuego",
+                            tipo_1 == "Flying" ~ "Volador",
+                            tipo_1 == "Ghost" ~ "Fantasma",
+                            tipo_1 == "Grass" ~ "Hierva",
+                            tipo_1 == "Ground" ~ "Tierra",
+                            tipo_1 == "Ice" ~ "Hielo",
+                            tipo_1 == "Normal" ~ "Normal",
+                            tipo_1 == "Poison" ~ "Veneno",
+                            tipo_1 == "Psychic" ~ "Psiquico",
+                            tipo_1 == "Rock" ~ "Roca",
+                            tipo_1 == "Steel" ~ "Acero")) %>%
+    mutate(tipo_2 = case_when(tipo_2 == "Water" ~ "Agua",
+                            tipo_2 == "Bug" ~ "Bicho",
+                            tipo_2 == "Dark" ~ "Oscuro",
+                            tipo_2 == "Dragon" ~ "Dragon",
+                            tipo_2 == "Electric" ~ "Electrico",
+                            tipo_2 == "Fairy" ~ "Hada",
+                            tipo_2 == "Fighting" ~ "Lucha",
+                            tipo_2 == "Fire" ~ "Fuego",
+                            tipo_2 == "Flying" ~ "Volador",
+                            tipo_2 == "Ghost" ~ "Fantasma",
+                            tipo_2 == "Grass" ~ "Hierva",
+                            tipo_2 == "Ground" ~ "Tierra",
+                            tipo_2 == "Ice" ~ "Hielo",
+                            tipo_2 == "Normal" ~ "Normal",
+                            tipo_2 == "Poison" ~ "Veneno",
+                            tipo_2 == "Psychic" ~ "Psiquico",
+                            tipo_2 == "Rock" ~ "Roca",
+                            tipo_2 == "Steel" ~ "Acero",
+                            TRUE ~ ""))
+view(pokemon_limpio)
+summary(pokemon_limpio$tipo_1)
+#con esto checkeo si hay nas
+sapply(pokemon, function(x) sum(is.na(x)))
+```
+
+```{r}
+#hora de graficar
+primario <- pokemon_limpio %>%
+  group_by(tipo_1) %>%
+  count(tipo_1) %>%
+  ggplot(aes(reorder(x = tipo_1,n), y = n)) +
+  geom_col(fill = "red", colour = "black") +
+  scale_y_continuous(expand = c(0,0), limits = c(0,120)) +
+  geom_label(aes(label = n)) +
+  labs(x = "tipo 1", y = "frecuencia", title = "Tipo primario mas frecuente") +
+  theme_classic()
+
+secundario <- pokemon_limpio %>%
+  group_by(tipo_2) %>%
+  count(tipo_2) %>%
+  ggplot(aes(reorder(x = tipo_2,n), y = n)) +
+  geom_col(fill = "steelblue", colour = "black") +
+  scale_y_continuous(expand = c(0,0), limits = c(0,120)) +
+  geom_label(aes(label = n)) +
+  labs(x = "tipo 2", y = "frecuencia", title = "Tipo primario mas frecuente") +
+  theme_bw()
+
+```
+```{r}
+#comparativa de stats por tipo
+primario_total <- pokemon_limpio %>% 
+  ggplot(aes(x = total)) +
+  geom_density(aes(fill = "red"), alpha = 0.6) +
+  facet_wrap(~tipo_1)
+
+primario_ataque <- pokemon_limpio %>% 
+  ggplot(aes(x = ataque)) +
+  geom_density(aes(fill = "blue"), alpha = 0.6) +
+  facet_wrap(~tipo_1)
+
+primario_defensa <- pokemon_limpio %>% 
+  ggplot(aes(x = defensa)) +
+  geom_density(aes(fill = "yellow"), alpha = 0.6) +
+  facet_wrap(~tipo_1)
+
+primario_defensa_especial <- pokemon_limpio %>% 
+  ggplot(aes(x = defensa_especial)) +
+  geom_density(aes(fill = "red"), alpha = 0.6) +
+  facet_wrap(~tipo_1)
+
+primario_ataque_especial <- pokemon_limpio %>% 
+  ggplot(aes(x = ataque_especial)) +
+  geom_density(aes(fill = "red"), alpha = 0.6) +
+  facet_wrap(~tipo_1)
+
+primario_velocidad <- pokemon_limpio %>% 
+  ggplot(aes(x = velocidad)) +
+  geom_density(aes(fill = "red"), alpha = 0.6) +
+  facet_wrap(~tipo_1)
+
+primario_generacion <- pokemon_limpio %>% 
+  ggplot(aes(x = total)) +
+  geom_density(aes(fill = "red"), alpha = 0.6) +
+  facet_wrap(~generacion)
+
+```
+```{r}
+pokemon_limpio %>%
+  group_by(tipo_1) %>%
+  ggplot(aes(x=ataque, y=defensa, size=total, color = generacion)) +
+    geom_point(alpha=0.3) +
+    scale_size(range = c(.1, 11), name="Total") +
+    facet_wrap(~tipo_1)
+```
+```{r}
+#veamos como se comportan los legendarios
+pokemon_limpio %>%
+  filter(legendario == "True") %>%
+  ggplot(aes(x = ataque, y = ataque_especial, size = total, color = generacion)) +
+  geom_point(alpha = 0.5) +
+  labs(title = "Scatterplot legendarios",
+       caption = "prueba para ver que legendarios tienen mas ataque, identificados por generacion")
+
+  
+```
+
