@@ -30,6 +30,7 @@ pokemon %>%
            na.rm = T,
            na.color = T)
 ```
+https://user-images.githubusercontent.com/68129414/174145967-25570c46-50fa-4ae6-96ce-7bed1142aa0f.png
 ```{r}
 #Radar chart para un solo caso
 pokemon_radar_chart <- select(pokemon, -X. ,-Type.1,-Type.2, -Total, -Generation, -Legendary)
@@ -51,7 +52,7 @@ radarchart(rayquaza,
 
 
 ```
-
+https://user-images.githubusercontent.com/68129414/174145987-b8f81044-8874-49d6-868e-6b76c2189fd1.png
 ```{r}
 #radarchart para muchas variables
 legendarios <- pokemon_radar_chart %>%
@@ -79,3 +80,4 @@ legend(1.3,1,
        col=c( rgb(0.2,0.5,0.5,0.2), rgb(0.8,0.2,0.5,0.2) , rgb(0.7,0.5,0.1,0.2) ),
        lty=c(1,2))
 ```
+https://user-images.githubusercontent.com/68129414/174145999-106a7732-0c72-4695-a1d6-3d0ce48d7116.png
